@@ -1,6 +1,5 @@
-﻿internal partial class Program
+internal partial class Program
 {
-    const int CantidadDeTareas=10;
     public class Tarea
     {
         private int tareaID;
@@ -23,22 +22,17 @@
         
         var pendientes= new List<Tarea>();
         var realizadas= new List<Tarea>();
-        CrearTareas(pendientes);
+        int CantidadDeTareas=new Random().Next(1,5);
+        CrearTareas(pendientes,CantidadDeTareas);
         MostrarTareas(pendientes);
-        ControlDeTareas(pendientes,realizadas);
+        ControlDeTareas(pendientes,realizadas,CantidadDeTareas);
+        // MostrarTareas(pendientes);
         MostrarTareasRealizadas(realizadas);
-        
-        Console.WriteLine("\t-----Busqueda de Tareas Pendientes-----\n");
-        Console.WriteLine("Palabra a buscar: ");
-        string? ingresada=Console.ReadLine();
-        foreach (var tareaita in pendientes)
-        {
-            
-        }
-        
+        BuscarTarea(pendientes);
+
 
     }
-        private static void CrearTareas(List<Tarea> tareas)
+        private static void CrearTareas(List<Tarea> tareas, int CantidadDeTareas)
         {
             for (int i = 0; i < CantidadDeTareas; i++)
             {
@@ -57,37 +51,28 @@
         }
     }
 
-    private static void ControlDeTareas(List<Tarea> realizadas, List<Tarea> pendientes)
+    public static void ControlDeTareas(List<Tarea> realizadas, List<Tarea> pendientes,int CantidadDeTareas)
     {
-        for (int i = 0; i < CantidadDeTareas; i++)
-        {
-            Console.WriteLine("La tarea "+realizadas[i].TareaID +" fue realizada?");
-            Console.WriteLine("0-SI\t 1-NO");
-            string? ingreso=Console.ReadLine();
-            int numero;
-            bool exito = int.TryParse(ingreso, out numero);
-            while (!exito && numero!=1 && numero!=2)
-            {
-                Console.WriteLine("Valor invalido, intente otra vez\n");
-                Console.WriteLine("La tarea "+pendientes[i].TareaID +" fue realizada?");
-                Console.WriteLine("0-SI\t 1-NO");
-            
-            }
 
-            if (numero==0)
+        int numTrealizadas = 0;
+        foreach (Tarea tarea in pendientes)
+        {
+            Console.WriteLine("Se realizo la tarea # ? (Si(1)/No(0))");
+            int respuesta = Convert.ToInt32(Console.ReadLine());
+            if (respuesta == 1)
             {
-                var tarea = pendientes[i];
                 realizadas.Add(tarea);
             }
+            numTrealizadas++;
+        }
+        foreach (Tarea tarea in realizadas)
+        {
+            pendientes.Remove(tarea);
         }
 
-        foreach (var tareita in realizadas)
-        {
-            pendientes.Remove(tareita);
-        }
     }
 
-    private static void MostrarTareasRealizadas(List<Tarea> tareas)
+    public static void MostrarTareasRealizadas(List<Tarea> tareas)
     {
         foreach (Tarea TareaX in tareas)
         {
@@ -97,13 +82,47 @@
             Console.WriteLine("Duracion: " +TareaX.Duracion+"\n");
         }
     }
-    
-
-    public enum Estado 
+     private static void BuscarTarea(List<Tarea> tareita)
     {
-        Pendiete = 0,   
-        Completada = 1
+        string? descripcionbuscada;
+        Console.WriteLine("Ingrese la descripcion de la tarea que desea buscar: ");
+        descripcionbuscada = Console.ReadLine();
+        int a = 0;
+
+        foreach (var tar in tareita)
+        {
+            if (tar.Descripcion.Contains(descripcionbuscada))
+            {
+                a = 1;
+                Console.WriteLine("Tarea encontrada!!!!!");
+                Console.WriteLine("Tarea ID: " + tar.TareaID);
+                Console.WriteLine("Descripcion: " + tar.Descripcion);
+                Console.WriteLine("Duracion: " + tar.Duracion);
+            }
+            
+        }
+
+        if (a == 0)
+        {
+            Console.WriteLine("No se encontro la tarea");
+        }
     }
-    
+
+      private static void GuardarArchivo(List<Tarea> tareita)
+    {
+        int suma = 0;
+        string? ruta = @"F:\tercerAño\TallerDeLenguajeI\tp8\tl1_tp8_2023-Unagui19";
+
+        foreach (var tar in tareita)
+        {
+            suma += tar.Duracion;
+        }
+
+        StreamWriter sw = new StreamWriter(ruta + "cantidad de horas trabajadas", true);
+        sw.WriteLine("Horas trabajadas: " + suma);
+        sw.Close();
+    }
+
+
 }
 
